@@ -1,0 +1,4 @@
+node_modules/
+Dist/
+dist/
+bot_sessions/

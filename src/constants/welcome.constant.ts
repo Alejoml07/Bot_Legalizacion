@@ -1,0 +1,1 @@
+export const WELCOME_KEYS: [string, ... string[]] = ['Hola', 'hola', 'ola'];
