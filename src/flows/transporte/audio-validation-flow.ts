@@ -4,6 +4,7 @@ import { LEGALIZATIONTYPES } from "~/constants/legalization-types.constant";
 import { TIMER_END_PROCESS } from "~/constants/timer.constant";
 import { VALIDATION_AUDIO_PROCESS } from "~/constants/travels/transport.constant";
 import { upsertJsonDataFile } from "~/services/data-json.service";
+import { saveHistory } from '~/services/history.service';
 import { onSendImageAudioDataCloud, onUpdateDataTravel } from "~/services/firebase-generals.service";
 import { generateRandomCode } from "~/services/general.service";
 import { reset, start, stop } from "~/services/idle-custom.service";
@@ -73,6 +74,14 @@ export const audioFlowValidation = addKeyword(EVENTS.ACTION)
                 transporteData.audioPath = publicUrl;
                 await onUpdateDataTravel(1, userPhone, LEGALIZATIONTYPES.travel, activeDocument, 'transportRecord', transporteData, state);
                 await upsertJsonDataFile(jsonDataPath, transporteData, 2);
+                // Guardar historial en Firestore
+                await saveHistory({
+                    ref: activeDocument,
+                    keyword: 'transport',
+                    answer: transporteData,
+                    phone: userPhone,
+                    provider: 'baileys'
+                });
                 // Enviar a API externa transporte
                 const selectedUserId = state.get('selectedUserId') as number | undefined;
                 const selectedTripId = state.get('selectedTripId') as string | number | undefined;

@@ -8,7 +8,8 @@
     "start": "node ./dist/app.js",
     "lint": "eslint .",
     "dev": "npm run lint && nodemon ./src/app.ts",
-    "build": "npx rollup -c"
+    "build": "npx rollup -c",
+    "diagnose:firebase": "tsx ./scripts/diagnose-firebase.ts"
   },
   "keywords": [],
   "dependencies": {

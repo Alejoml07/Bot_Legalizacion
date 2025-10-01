@@ -237,13 +237,13 @@ const tripSelectFlow = addKeyword<Provider, Database>(EVENTS.ACTION)
       const authUser = (await state.get("authUser")) as any | undefined;
       console.log("[tripSelectFlow] authUser:", authUser);
       // Implementación original (correcta) para obtener la cédula del usuario autenticado:
-      // const cedulaOriginal = String(
-      //   (authUser && (authUser.document || authUser.cedula)) ||
-      //     (await state.get("document")) ||
-      //     ""
-      // ).trim();
+      const cedula = String(
+        (authUser && (authUser.document || authUser.cedula)) ||
+          (await state.get("document")) ||
+          ""
+      ).trim();
       // ===== MODO PRUEBAS =====
-      const cedula = "24682468"; 
+      // const cedula = "24682468"; 
       // ==================================================================
       if (!cedula) {
         await flowDynamic("No pude identificar tu usuario luego del inicio de sesión. Intenta nuevamente.");

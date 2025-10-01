@@ -1,17 +1,17 @@
 import admin from 'firebase-admin';
-import serviceAccount from '../constants/firebase/serviceAccountKey.json'; // Import your service account key
-
+import serviceAccount from '../constants/firebase/serviceAccountKey.json';
 import { getFirestore } from 'firebase-admin/firestore';
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),  
-  databaseURL: "https://apileonisa-rfid-default-rtdb.firebaseio.com",
-  storageBucket: "gs://apileonisa-rfid.appspot.com"
-});
+const app = admin.apps.length
+  ? admin.app()
+  : admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+      projectId: (serviceAccount as any).project_id,
+      databaseURL: 'https://apileonisa-rfid-default-rtdb.firebaseio.com',
+      storageBucket: 'apileonisa-rfid.appspot.com',
+    });
 
-
-const db = getFirestore('legalizacion');
-
+const db = getFirestore(app);
 const bucket = admin.storage().bucket();
 
 export { db, bucket };

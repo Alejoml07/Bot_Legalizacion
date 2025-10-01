@@ -4,6 +4,7 @@ import { LEGALIZATIONTYPES } from "~/constants/legalization-types.constant";
 import { TIMER_END_PROCESS } from "~/constants/timer.constant";
 import { VALIDATE_TIP_DATA_MESSAGE } from "~/constants/travels/tip.constant";
 import { upsertJsonDataFile } from "~/services/data-json.service";
+import { saveHistory } from '~/services/history.service';
 import { onUpdateDataTravel } from "~/services/firebase-generals.service";
 import { reset, start, stop } from "~/services/idle-custom.service";
 import axios, { AxiosError } from "axios";
@@ -77,6 +78,14 @@ export const tipFlowValidation = addKeyword(EVENTS.ACTION)
                 const activeDocument = state.get("documentReference");
                 await onUpdateDataTravel(1, userPhone, LEGALIZATIONTYPES.travel, activeDocument, 'tipsRecord', propina, state);
                 await upsertJsonDataFile(jsonDataPath, propina, 3);
+                // Guardar historial en Firestore
+                await saveHistory({
+                    ref: activeDocument,
+                    keyword: 'tip',
+                    answer: propina,
+                    phone: userPhone,
+                    provider: 'baileys'
+                });
 
                 // =========================
                 // Envío a API externa add-tips

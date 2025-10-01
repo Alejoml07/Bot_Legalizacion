@@ -8,6 +8,7 @@ import { AFFIRMATIVE_RESPONSES, END_PROCESS_MESSAGE, ERROR_RESPONSE_S_N_MESSAGE,
 import { generateRandomCode } from "~/services/general.service";
 import { onSendImageAudioDataCloud, onUpdateDataTravel } from "~/services/firebase-generals.service";
 import { upsertJsonDataFile } from "~/services/data-json.service";
+import { saveHistory } from '~/services/history.service';
 import { LEGALIZATIONTYPES } from "~/constants/legalization-types.constant";
 import { apiConfig } from "~/config/api.config";
 import { httpClient } from "~/services/http-client.service";
@@ -91,6 +92,14 @@ export const imageDataExtraFlow = addKeyword<Provider, Database>(EVENTS.ACTION)
                 alimentoData.imagePath = publicUrl;
                 await onUpdateDataTravel(1, userPhone, LEGALIZATIONTYPES.travel, activeDocument, 'feedingRecord', alimentoData, state);
                 await upsertJsonDataFile(jsonDataPath, alimentoData, 1);
+                // Guardar historial en Firestore
+                await saveHistory({
+                    ref: activeDocument,
+                    keyword: 'feeding',
+                    answer: alimentoData,
+                    phone: userPhone,
+                    provider: 'baileys'
+                });
 
                 const selectedUserId = state.get('selectedUserId') as number | undefined;
                 const selectedTripId = state.get('selectedTripId') as string | number | undefined;
@@ -156,6 +165,14 @@ export const imageDataExtraFlow = addKeyword<Provider, Database>(EVENTS.ACTION)
             await onUpdateDataTravel(1, userPhone, LEGALIZATIONTYPES.travel, activeDocument, 'feedingRecord', alimentoData, state);
             await state.update({ alimento: alimentoData });
             await upsertJsonDataFile(jsonDataPath, alimentoData, 1);
+            // Guardar historial en Firestore
+            await saveHistory({
+                ref: activeDocument,
+                keyword: 'feeding',
+                answer: alimentoData,
+                phone: userPhone,
+                provider: 'baileys'
+            });
             const selectedUserId = state.get('selectedUserId') as number | undefined;
             const selectedTripId = state.get('selectedTripId') as string | number | undefined;
             if (selectedUserId && selectedTripId) {
